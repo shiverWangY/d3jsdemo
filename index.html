@@ -5,26 +5,22 @@
 		<title>force chart</title>
 		
 		<script src="https://d3js.org/d3.v3.min.js"></script>
-		<style>
-			#mainSvg{
-				height:100%;
-				width:100%
-			}
-			
-		<style>
-			
 	</head>
 	<body>
-		<svg id = 'mainSvg'>
-		<svg>
 		
 	
 	<script>
-  	d3.select("#mainSvg")
+    var height = document.documentElement.clientHeight,
+		width = document.documentElement.clientWidth
+		
+		
+	var mainSvg = d3.select("body").append("svg")
+	.attr("height",height)
+	.attr("width",width)
 	.on("click",boom)
 	.on("dblclick",merge);
-			
-	var appendCircle = d3.select("#mainSvg").append("g")
+	
+	var appendCircle = mainSvg.append("g");
 	var color = d3.scale.category10();
 	var force = d3.layout.force()
 	.size([width,height])
