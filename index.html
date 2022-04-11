@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>force chart</title>
+		
+		<script src="https://d3js.org/d3.v3.min.js"></script>
+	</head>
+	<body>
+		
+	
+	<script>
+    var height = 900,
+		width = 1600,
+		border = "1px dashed black";
+		
+	var mainSvg = d3.select("body").append("svg")
+	.attr("height",height)
+	.attr("width",width)
+	.style("border",border)
+	.on("click",boom)
+	.on("dblclick",merge);
+	
+	var appendCircle = mainSvg.append("g");
+	var color = d3.scale.category10();
+	var force = d3.layout.force()
+	.size([width,height])
+	.gravity(1)
+	.charge(-100)
+	.friction(0.8);
+	
+	function boom(){
+		force.gravity(0).charge(-100);
+	}
+	
+	function merge(){
+		force.gravity(0).charge(50);
+	}
+	
+	var drag = d3.behavior.drag()
+	.on("drag",drag);
+	
+	function drag(){
+		var p = d3.mouse(this);
+		d3.select(this)
+		.attr("transform","translate("+ p[0] + ","+ p[1] +")")
+	};
+	
+	var zoom = d3.behavior.zoom()
+	.scaleExtent([1,3])
+	.on("zoom",zoom);
+	
+	function zoom(){
+		appendCircle.attr("transform",
+		"translate("
+		+ d3.event.translate
+		+ ")scale("
+		+ d3.event.scale
+		+ ")");
+		
+	}
+	//mainSvg.call(zoom)
+	
+	function appendDot(){
+		var p =d3.mouse(this);
+		
+		var node = {x:p[0],y:p[1]};
+		
+		appendCircle.append("circle").data([node])
+		.attr("class","dot")
+		.attr("cx",function(d){return d.x;})
+		.attr("cy",function(d){return d.y;})
+		.attr("r",0.5)
+		.style("fill",function(){
+			return color(Math.random());
+		})
+		.style("stroke","none")
+		
+		.transition()
+		.attr("r",20*Math.random())
+		.transition()
+		.delay(5000)
+		.attr("r",0)
+		.each("end",function(){
+			force.nodes().shift();
+		})
+		.remove();
+		
+		force.nodes().push(node);
+		
+		force.start().on("tick",function(){
+		d3.selectAll(".dot")
+		.attr("cx",function(d){return d.x;})
+		.attr("cy",function(d){return d.y;})
+	});
+		
+	
+	}
+	
+	
+	
+	mainSvg.on("mousemove",appendDot);
+	</script>
+	</body>
+</html>
