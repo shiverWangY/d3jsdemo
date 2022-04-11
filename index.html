@@ -20,8 +20,11 @@
 		
 	
 	<script>
-  	
-	var appendCircle = d3.select("#mainSvg")
+  	d3.select("#mainSvg")
+	.on("click",boom)
+	.on("dblclick",merge);
+			
+	var appendCircle = d3.select("#mainSvg").append("g")
 	var color = d3.scale.category10();
 	var force = d3.layout.force()
 	.size([width,height])
